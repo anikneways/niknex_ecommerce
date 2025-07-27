@@ -1,0 +1,32 @@
+{% extends "base.html" %} {% block title %}Search: {{ query }}{% endblock %} {%
+block content %}
+
+<h2>🔍 Search Results for "{{ query }}"</h2>
+
+{% if products %}
+<div class="row row-cols-1 row-cols-md-3 g-4 mt-3">
+  {% for product in products %}
+  <div class="col">
+    <div class="card h-100">
+      <img
+        src="{{ url_for('static', filename='uploads/' + product.image_filename) }}"
+        class="card-img-top"
+        style="height: 200px; object-fit: cover"
+        alt="{{ product.name }}"
+      />
+      <div class="card-body">
+        <h5 class="card-title">{{ product.name }}</h5>
+        <p class="card-text">৳{{ "%.2f"|format(product.price) }}</p>
+        <a
+          href="{{ url_for('product_view', product_id=product.id) }}"
+          class="btn btn-sm btn-primary"
+          >View</a
+        >
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<p class="text-muted mt-3">No products found.</p>
+{% endif %} {% endblock %}

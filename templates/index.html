@@ -1,0 +1,198 @@
+{% extends "base.html" %} {% block title %}Home - Niknex{% endblock %} {% block
+content %}
+<div class="container-fluid mt-4">
+  <div class="row">
+    <!-- Sidebar - Product List -->
+    <div
+      class="col-md-3 bg-light p-3 border-end"
+      style="height: 90vh; overflow-y: auto"
+    >
+      <h4 class="mb-3 text-center">🛍 Products</h4>
+      {% if products %} {% for product in products %}
+      <div class="card mb-3 shadow-sm" data-product-id="{{ product.id }}">
+        <img
+          src="{{ url_for('static', filename='uploads/' + product.image_filename) }}"
+          class="card-img-top"
+          alt="{{ product.name }}"
+          style="object-fit: cover; height: 150px"
+        />
+        <div class="card-body p-2">
+          <h6 class="card-title mb-1">{{ product.name }}</h6>
+          <p class="text-muted mb-1 small">
+            ৳{{ "%.2f"|format(product.price) }}
+          </p>
+          <div class="d-grid gap-1">
+            <button class="btn btn-outline-info btn-sm view-btn">👁 View</button>
+            <button class="btn btn-outline-danger btn-sm fav-btn">❤ Fav</button>
+            <button class="btn btn-outline-primary btn-sm buy-btn">
+              🛍 Buy
+            </button>
+          </div>
+        </div>
+      </div>
+      {% endfor %} {% else %}
+      <div class="alert alert-warning text-center">
+        No products available yet.
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- Main Content -->
+    <div class="col-md-9 p-4">
+      <!-- Image Carousel -->
+      <div
+        id="productCarousel"
+        class="carousel slide mb-4 shadow rounded"
+        data-bs-ride="carousel"
+        data-bs-interval="1000"
+      >
+        <!-- Indicators -->
+        <div class="carousel-indicators">
+          {% for product in products %}
+          <button
+            type="button"
+            data-bs-target="#productCarousel"
+            data-bs-slide-to="{{ loop.index0 }}"
+            {%
+            if
+            loop.first
+            %}class="active"
+            {%
+            endif
+            %}
+            aria-current="true"
+            aria-label="Slide {{ loop.index }}"
+          ></button>
+          {% endfor %}
+        </div>
+
+        <!-- Slides -->
+        <div class="carousel-inner rounded">
+          {% for product in products %}
+          <div class="carousel-item {% if loop.first %}active{% endif %}">
+            <img
+              src="{{ url_for('static', filename='uploads/' + product.image_filename) }}"
+              class="d-block w-100"
+              alt="{{ product.name }}"
+              style="
+                object-fit: contain;
+                max-height: 350px;
+                background-color: #f8f9fa;
+              "
+            />
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- Controls -->
+        <button
+          class="carousel-control-prev"
+          type="button"
+          data-bs-target="#productCarousel"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button
+          class="carousel-control-next"
+          type="button"
+          data-bs-target="#productCarousel"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon"></span>
+        </button>
+      </div>
+
+      <!-- Welcome Section -->
+      <div class="bg-primary text-white p-5 rounded shadow-lg mb-4 text-center">
+        <h1 class="display-5 fw-bold">Welcome to Niknex</h1>
+        <p class="lead">Buy products easily and save your money (৳) .</p>
+        <a href="{{ url_for('upload_product') }}" class="btn btn-light btn-lg"
+          >🚀 Smile always 😊!</a
+        >
+      </div>
+
+      <!-- Featured Products -->
+      <div class="row">
+        <h3 class="mb-3">Featured Products</h3>
+        {% for product in products[:4] %}
+        <div class="col-md-6 col-lg-4 col-xl-3 mb-4">
+          <div class="card h-100 shadow-sm" data-product-id="{{ product.id }}">
+            <img
+              src="{{ url_for('static', filename='uploads/' + product.image_filename) }}"
+              class="card-img-top"
+              alt="{{ product.name }}"
+              style="object-fit: cover; height: 200px"
+            />
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">{{ product.name }}</h5>
+              <p class="card-text small text-muted">
+                {{ product.description }}
+              </p>
+              <p><strong>৳{{ "%.2f"|format(product.price) }}</strong></p>
+              <div class="mt-auto d-grid gap-2">
+                <button class="btn btn-outline-info btn-sm view-btn">
+                  👁 View
+                </button>
+                <button class="btn btn-outline-danger btn-sm fav-btn">
+                  ❤ Favourite
+                </button>
+                <button class="btn btn-outline-primary btn-sm buy-btn">
+                  🛍 Buy Now
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .card-img-top:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+  }
+
+  .carousel-item img {
+    transition: transform 0.6s ease;
+  }
+</style>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const handleClick = async (endpoint, productId) => {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ product_id: productId }),
+      });
+      const data = await res.json();
+      alert(data.message);
+    };
+
+    document.querySelectorAll(".view-btn").forEach((btn) =>
+      btn.addEventListener("click", (e) => {
+        const productId = e.target.closest(".card").dataset.productId;
+        window.location.href = `/product/${productId}`;
+      })
+    );
+
+    document.querySelectorAll(".buy-btn").forEach((btn) =>
+      btn.addEventListener("click", (e) => {
+        const productId = e.target.closest(".card").dataset.productId;
+        window.location.href = `/buy/${productId}`;
+      })
+    );
+
+    document.querySelectorAll(".fav-btn").forEach((btn) =>
+      btn.addEventListener("click", (e) => {
+        const productId = e.target.closest(".card").dataset.productId;
+        handleClick("/api/favourite", productId);
+      })
+    );
+  });
+</script>
+{% endblock %}

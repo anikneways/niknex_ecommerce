@@ -1,0 +1,100 @@
+{% extends "base.html" %} {% block title %}My Orders{% endblock %} {% block
+content %}
+<div class="container my-5">
+  <h2 class="mb-4 text-primary fw-bold">🧾 My Orders</h2>
+
+  {% if orders %}
+  <div class="table-responsive shadow-sm rounded-3">
+    <table class="table table-bordered align-middle mb-0">
+      <thead class="table-dark">
+        <tr>
+          <th scope="col" class="text-center">#</th>
+          <th scope="col">Product</th>
+          <th scope="col" class="text-center">Qty</th>
+          <th scope="col" class="text-center">Color</th>
+          <th scope="col" class="text-end">Unit Price (৳)</th>
+          <th scope="col" class="text-end">Total (৳)</th>
+          <th scope="col" class="text-center">Status</th>
+          <th scope="col" class="text-center">Ordered At</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in orders %}
+        <tr>
+          <td class="text-center">{{ loop.index }}</td>
+
+          <td>
+            {% if order.product %}
+            <div class="d-flex align-items-center gap-2">
+              {% if order.product.image_url %}
+              <img
+                src="{{ url_for('static', filename='uploads/' ~ order.product.image_url) }}"
+                alt="Product Image"
+                class="rounded"
+                width="45"
+                height="45"
+              />
+              {% endif %}
+              <span>{{ order.product.name }}</span>
+            </div>
+            {% else %}
+            <em class="text-muted">Deleted Product</em>
+            {% endif %}
+          </td>
+
+          <td class="text-center">{{ order.quantity }}</td>
+
+          <td class="text-center">
+            {% if order.selected_color %}
+            <span class="d-inline-flex align-items-center gap-1">
+              <span
+                style="display:inline-block;width:14px;height:14px;border:1px solid #ccc;border-radius:50%;background-color:{{ order.selected_color }};"
+                title="{{ order.selected_color }}"
+              ></span>
+              <small>{{ order.selected_color }}</small>
+            </span>
+            {% else %}
+            <span class="text-muted">-</span>
+            {% endif %}
+          </td>
+
+          <td class="text-end">
+            {% if order.product %} {{ "%.2f"|format(order.product.price) }} {%
+            else %}
+            <span class="text-muted">-</span>
+            {% endif %}
+          </td>
+
+          <td class="text-end fw-bold text-success">
+            {{ "%.2f"|format(order.total_amount) }}
+          </td>
+
+          <td class="text-center text-capitalize">
+            {% if order.delivery_status == 'Pending' %}
+            <span class="badge bg-warning text-dark">Pending</span>
+            {% elif order.delivery_status == 'Shipped' %}
+            <span class="badge bg-info text-dark">Shipped</span>
+            {% elif order.delivery_status == 'Delivered' %}
+            <span class="badge bg-success">Delivered</span>
+            {% elif order.delivery_status == 'Cancelled' %}
+            <span class="badge bg-danger">Cancelled</span>
+            {% else %}
+            <span class="badge bg-secondary"
+              >{{ order.delivery_status or 'N/A' }}</span
+            >
+            {% endif %}
+          </td>
+
+          <td class="text-center text-muted" style="white-space: nowrap">
+            {{ order.created_at.strftime('%d %b %Y, %I:%M %p') }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="alert alert-info mt-4">You have not placed any orders yet.</div>
+  {% endif %}
+</div>
+{% endblock %}

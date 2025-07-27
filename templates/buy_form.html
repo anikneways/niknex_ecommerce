@@ -1,0 +1,120 @@
+{% extends "base.html" %} {% block title %}Buy {{ product.name }}{% endblock %}
+{% block content %}
+<div class="container my-5" style="max-width: 700px">
+  <h2 class="mb-4 text-center">🛒 Buy: {{ product.name }}</h2>
+
+  <form method="POST" id="orderForm">
+    <div class="mb-3">
+      <label for="name">Your Name</label>
+      <input type="text" name="name" id="name" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+      <label for="phone">Phone</label>
+      <input type="tel" name="phone" id="phone" class="form-control" required />
+    </div>
+
+    <div class="mb-3">
+      <label for="address">Delivery Address</label>
+      <textarea
+        name="address"
+        id="address"
+        class="form-control"
+        required
+      ></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label for="color">Choose Color</label>
+      <select name="color" id="color" class="form-control" required>
+        <option value="" disabled selected>Select a color</option>
+        <option value="Black">Black</option>
+        <option value="Blue">Blue</option>
+        <option value="Red">Red</option>
+        <option value="Gray">Gray</option>
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="quantity">Quantity</label>
+      <input
+        type="number"
+        name="quantity"
+        id="quantity"
+        class="form-control"
+        value="1"
+        min="1"
+        step="1"
+        required
+      />
+    </div>
+
+    <hr />
+
+    <div id="order-summary" class="mt-4">
+      <h5>Order Summary</h5>
+      <p>
+        Product Price (per unit): ৳<strong
+          id="product-price"
+          data-price="{{ product.price }}"
+        >
+          {{ "%.2f"|format(product.price) }}
+        </strong>
+      </p>
+      <p>Courier Charge: ৳<strong id="courier-charge">100</strong></p>
+      <p>Total Payment: ৳<strong id="total-payment">0</strong></p>
+      <p class="text-muted">🚚 Estimated Delivery: 2 Days</p>
+    </div>
+
+    <input type="hidden" name="payment_method" value="Cash on Delivery" />
+
+    <button type="submit" class="btn btn-primary mt-3 w-100">
+      ✅ Confirm Purchase
+    </button>
+  </form>
+</div>
+
+<style>
+  #order-summary p {
+    margin-bottom: 0.4rem;
+  }
+</style>
+
+<script>
+  const phoneInput = intlTelInput(document.querySelector("#phone"), {
+    initialCountry: "bd",
+    separateDialCode: true,
+    preferredCountries: ["bd", "in", "us", "gb"],
+    utilsScript:
+      "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.19/js/utils.js",
+  });
+
+  function updateSummary() {
+    const priceEl = document.getElementById("product-price");
+    const quantity = parseInt(document.getElementById("quantity").value) || 1;
+    const basePrice = parseFloat(priceEl.dataset.price) || 0;
+    const address = document.getElementById("address").value.toLowerCase();
+
+    let courierCharge = 100;
+    if (
+      address.includes("outside") ||
+      address.includes("mymensingh") ||
+      address.includes("chattogram")
+    ) {
+      courierCharge = 200;
+    }
+
+    const totalProductPrice = basePrice * quantity;
+    const totalPayment = totalProductPrice + courierCharge;
+
+    document.getElementById("courier-charge").textContent =
+      courierCharge.toFixed(2);
+    document.getElementById("total-payment").textContent =
+      totalPayment.toFixed(2);
+  }
+
+  document.getElementById("quantity").addEventListener("input", updateSummary);
+  document.getElementById("address").addEventListener("input", updateSummary);
+  window.onload = updateSummary;
+</script>
+{% endblock %}

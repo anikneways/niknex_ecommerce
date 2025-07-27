@@ -1,0 +1,89 @@
+{% extends "base.html" %} {% block title %}Your Cart{% endblock %} {% block
+content %}
+<div class="container py-4">
+  <h2 class="mb-4">🛒 Your Shopping Cart</h2>
+
+  {% if cart_items %}
+  <form method="POST" action="{{ url_for('update_cart') }}">
+    <div class="table-responsive">
+      <table class="table table-bordered align-middle">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Product</th>
+            <th scope="col" style="width: 90px">Image</th>
+            <th scope="col">Price</th>
+            <th scope="col" style="width: 110px">Quantity</th>
+            <th scope="col">Total</th>
+            <th scope="col" style="width: 120px">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% set grand_total = 0 %} {% for item in cart_items %} {% set total =
+          item.product.price * item.quantity %} {% set grand_total = grand_total
+          + total %}
+          <tr>
+            <td><strong>{{ item.product.name }}</strong></td>
+            <td>
+              <img
+                src="{{ url_for('static', filename='uploads/' + item.product.image_filename) }}"
+                alt="{{ item.product.name }}"
+                class="img-thumbnail"
+                width="70"
+                height="70"
+              />
+            </td>
+            <td>৳{{ "%.2f"|format(item.product.price) }}</td>
+            <td>
+              <input
+                type="number"
+                name="quantities[{{ item.product.id }}]"
+                value="{{ item.quantity }}"
+                min="1"
+                class="form-control"
+                style="max-width: 90px"
+                aria-label="Quantity for {{ item.product.name }}"
+              />
+            </td>
+            <td>৳{{ "%.2f"|format(total) }}</td>
+            <td>
+              <a
+                href="{{ url_for('remove_from_cart', product_id=item.product.id) }}"
+                class="btn btn-outline-danger btn-sm"
+                aria-label="Remove {{ item.product.name }} from cart"
+                title="Remove"
+              >
+                <i class="bi bi-trash"></i> Remove
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+        <tfoot>
+          <tr class="table-secondary">
+            <th colspan="4" class="text-end">Grand Total:</th>
+            <th colspan="2" class="fw-bold">
+              ৳{{ "%.2f"|format(grand_total) }}
+            </th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+
+    <div class="d-flex justify-content-between mt-4">
+      <a href="{{ url_for('home') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left"></i> Continue Shopping
+      </a>
+      <button type="submit" class="btn btn-success">
+        <i class="bi bi-arrow-repeat"></i> Update Cart
+      </button>
+    </div>
+  </form>
+
+  {% else %}
+  <div class="alert alert-info">🛍️ Your cart is currently empty.</div>
+  <a href="{{ url_for('home') }}" class="btn btn-primary">
+    <i class="bi bi-shop"></i> Browse Products
+  </a>
+  {% endif %}
+</div>
+{% endblock %}

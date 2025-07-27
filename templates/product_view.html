@@ -1,0 +1,38 @@
+{% extends "base.html" %} {% block title %}{{ product.name }} - Product View{%
+endblock %} {% block content %}
+<div class="container my-5" style="max-width: 700px">
+  <div class="card shadow-sm border-0">
+    <div class="row g-0">
+      <div class="col-md-5 text-center p-3">
+        <img
+          src="{{ url_for('static', filename='uploads/' + product.image_filename) }}"
+          alt="{{ product.name }}"
+          class="img-fluid rounded"
+          style="max-height: 320px; object-fit: contain"
+        />
+      </div>
+      <div class="col-md-7 p-4 d-flex flex-column justify-content-between">
+        <div>
+          <h2 class="fw-bold">{{ product.name }}</h2>
+          <p class="text-muted mb-3">{{ product.description }}</p>
+          <p class="h4 text-primary fw-semibold">
+            ৳{{ "%.2f"|format(product.price) }}
+          </p>
+        </div>
+
+        <div class="d-flex gap-2">
+          <a href="{{ url_for('home') }}" class="btn btn-outline-secondary">
+            ← Back to Home
+          </a>
+          <a
+            href="{{ url_for('buy_product', product_id=product.id) }}"
+            class="btn btn-success flex-grow-1"
+          >
+            🛒 Buy Now
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

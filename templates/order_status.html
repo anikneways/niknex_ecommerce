@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Order Status</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #f4f4f9;
+        padding: 20px;
+        margin: 0;
+      }
+
+      .order-container {
+        max-width: 650px;
+        margin: auto;
+        background-color: white;
+        padding: 30px;
+        border-radius: 14px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.08);
+      }
+
+      h2 {
+        color: #333;
+        border-bottom: 2px solid #4caf50;
+        padding-bottom: 10px;
+        margin-bottom: 25px;
+      }
+
+      .order-details p {
+        font-size: 16px;
+        margin: 8px 0;
+        color: #555;
+      }
+
+      .order-details strong {
+        color: #000;
+      }
+
+      .status {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 8px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .status.pending {
+        background-color: #fff3cd;
+        border: 1px solid #ffeeba;
+        color: #856404;
+      }
+
+      .status.delivered {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+      }
+
+      .status::before {
+        content: "🚚";
+        font-size: 18px;
+      }
+
+      .status.delivered::before {
+        content: "✅";
+      }
+
+      .home-button {
+        display: inline-block;
+        margin-top: 30px;
+        padding: 12px 24px;
+        background-color: #4caf50;
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
+      }
+
+      .home-button:hover {
+        background-color: #45a049;
+      }
+
+      @media (max-width: 600px) {
+        .order-container {
+          padding: 20px;
+        }
+
+        .home-button {
+          width: 100%;
+          text-align: center;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="order-container">
+      <h2>🧾 Order Summary</h2>
+
+      <div class="order-details">
+        <p><strong>Product:</strong> {{ order.product.name }}</p>
+        <p><strong>Color:</strong> {{ order.color }}</p>
+        <p><strong>Quantity:</strong> {{ order.quantity }}</p>
+        <p><strong>Delivery Area:</strong> {{ order.delivery_area }}</p>
+        <p><strong>Courier Charge:</strong> {{ order.courier_charge }} TK</p>
+        <p><strong>Total Amount:</strong> {{ order.total_amount }} TK</p>
+        <p><strong>Payment Method:</strong> {{ order.payment_method }}</p>
+        <p>
+          <strong>Transaction ID:</strong> {{ order.transaction_id or "N/A" }}
+        </p>
+        <p><strong>Status:</strong> {{ order.delivery_status }}</p>
+        <p>
+          <strong>Order Date:</strong> {{ order.created_at.strftime('%d %b %Y')
+          }}
+        </p>
+      </div>
+
+      {% if order.delivery_status != "Delivered" %}
+      <div class="status pending">
+        Estimated delivery in {{ 2 - (datetime.utcnow() - order.created_at).days
+        }} day(s)
+      </div>
+      {% else %}
+      <div class="status delivered">Your product has been delivered.</div>
+      {% endif %}
+
+      <a href="{{ url_for('home') }}" class="home-button">🏠 Go to Home</a>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,121 @@
+{% extends "base.html" %} {% block title %}Register{% endblock %} {% block
+content %}
+<div
+  style="
+    max-width: 500px;
+    margin: auto;
+    padding: 2rem;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  "
+>
+  <h2 style="text-align: center; margin-bottom: 1rem">Create Your Account</h2>
+  <form method="POST" style="display: flex; flex-direction: column; gap: 1rem">
+    <input
+      name="name"
+      placeholder="Full Name"
+      required
+      style="padding: 10px; border-radius: 6px; border: 1px solid #ccc"
+    />
+
+    <div style="display: flex; gap: 0.5rem">
+      <select
+        name="country_code"
+        required
+        style="
+          flex: 1;
+          padding: 10px;
+          border-radius: 6px;
+          border: 1px solid #ccc;
+        "
+      >
+        <optgroup label="Asia">
+          <option value="+880" selected>+880 (Bangladesh)</option>
+          <option value="+91">+91 (India)</option>
+          <option value="+92">+92 (Pakistan)</option>
+          <option value="+977">+977 (Nepal)</option>
+          <option value="+94">+94 (Sri Lanka)</option>
+        </optgroup>
+        <optgroup label="Europe">
+          <option value="+44">+44 (UK)</option>
+          <option value="+33">+33 (France)</option>
+          <option value="+49">+49 (Germany)</option>
+          <option value="+39">+39 (Italy)</option>
+          <option value="+371">+371 (Latvia)</option>
+        </optgroup>
+        <optgroup label="North America">
+          <option value="+1">+1 (USA/Canada)</option>
+          <option value="+52">+52 (Mexico)</option>
+        </optgroup>
+        <optgroup label="Middle East">
+          <option value="+971">+971 (UAE)</option>
+          <option value="+966">+966 (Saudi Arabia)</option>
+          <option value="+974">+974 (Qatar)</option>
+        </optgroup>
+        <optgroup label="Africa">
+          <option value="+234">+234 (Nigeria)</option>
+          <option value="+254">+254 (Kenya)</option>
+          <option value="+27">+27 (South Africa)</option>
+        </optgroup>
+        <optgroup label="Oceania">
+          <option value="+61">+61 (Australia)</option>
+          <option value="+64">+64 (New Zealand)</option>
+        </optgroup>
+      </select>
+      <input
+        name="phone"
+        placeholder="Phone Number"
+        required
+        style="
+          flex: 2;
+          padding: 10px;
+          border-radius: 6px;
+          border: 1px solid #ccc;
+        "
+      />
+    </div>
+
+    <input
+      type="email"
+      name="email"
+      placeholder="Email Address"
+      required
+      style="padding: 10px; border-radius: 6px; border: 1px solid #ccc"
+    />
+    <input
+      name="address"
+      placeholder="Full Address"
+      required
+      style="padding: 10px; border-radius: 6px; border: 1px solid #ccc"
+    />
+    <input
+      name="username"
+      placeholder="Choose Username"
+      required
+      style="padding: 10px; border-radius: 6px; border: 1px solid #ccc"
+    />
+    <input
+      type="password"
+      name="password"
+      placeholder="Create Password"
+      required
+      style="padding: 10px; border-radius: 6px; border: 1px solid #ccc"
+    />
+
+    <button
+      type="submit"
+      style="
+        padding: 10px;
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      "
+    >
+      Register
+    </button>
+  </form>
+</div>
+{% endblock %}

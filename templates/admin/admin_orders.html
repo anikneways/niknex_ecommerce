@@ -1,0 +1,97 @@
+{% extends "base.html" %} {% block title %}Admin Orders{% endblock %} {% block
+content %}
+<style>
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .admin-header h1 {
+    font-weight: bold;
+  }
+
+  .admin-header .btn {
+    white-space: nowrap;
+  }
+
+  .table thead th {
+    background-color: #343a40;
+    color: white;
+  }
+
+  .table-hover tbody tr:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+  }
+</style>
+
+{% with messages = get_flashed_messages(with_categories=true) %} {% if messages
+%}
+<div class="container mt-3">
+  {% for category, message in messages %}
+  <div
+    class="alert alert-{{ category }} alert-dismissible fade show"
+    role="alert"
+  >
+    {{ message }}
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %} {% endwith %}
+
+<div class="container mt-4">
+  <div class="admin-header mb-4">
+    <h1><i class="bi bi-bag-check-fill text-primary"></i> Orders Overview</h1>
+    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-primary">
+      &larr; Back to Dashboard
+    </a>
+  </div>
+
+  <div class="card shadow-sm mb-4">
+    <div class="card-body">
+      <table class="table table-bordered table-striped table-hover">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>User</th>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Customer</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Payment</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+          <tr>
+            <td>{{ order.id }}</td>
+            <td>{{ order.user.username }}</td>
+            <td>{{ order.product.name }}</td>
+            <td>{{ order.quantity }}</td>
+            <td>{{ order.customer_name }}</td>
+            <td>{{ order.customer_phone }}</td>
+            <td>{{ order.customer_address }}</td>
+            <td>{{ order.payment_method }}</td>
+            <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="9" class="text-center text-muted">No orders found.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

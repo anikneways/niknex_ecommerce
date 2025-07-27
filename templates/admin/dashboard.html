@@ -1,0 +1,52 @@
+{% extends "admin/base.html" %} {% block title %}Admin Panel{% endblock %} {%
+block content %}
+<h2 class="mb-4">🛠 Admin Control Panel</h2>
+
+<div class="row g-3">
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body text-center">
+        <h5 class="card-title">👤 Manage Users</h5>
+        <a href="{{ url_for('admin_users') }}" class="btn btn-primary mt-2"
+          >Go</a
+        >
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body text-center">
+        <h5 class="card-title">📦 Manage Products</h5>
+        <a href="{{ url_for('admin_products') }}" class="btn btn-primary mt-2"
+          >Go</a
+        >
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body text-center">
+        <h5 class="card-title">🛒 View Orders</h5>
+        <a href="{{ url_for('admin_orders') }}" class="btn btn-primary mt-2"
+          >Go</a
+        >
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card shadow-sm">
+      <div class="card-body text-center">
+        <h5 class="card-title">🔍 User Search Logs</h5>
+        <a
+          href="{{ url_for('admin_search_logs') }}"
+          class="btn btn-primary mt-2"
+          >Go</a
+        >
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

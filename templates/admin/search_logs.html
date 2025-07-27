@@ -1,0 +1,25 @@
+{% extends "admin/base.html" %} {% block title %}Search Logs{% endblock %} {%
+block content %}
+<h2 class="mb-4">🔍 User Search History</h2>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>User ID</th>
+      <th>Query</th>
+      <th>Timestamp</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for log in logs %}
+    <tr>
+      <td>{{ log.id }}</td>
+      <td>{{ log.user_id or 'Guest' }}</td>
+      <td>{{ log.query }}</td>
+      <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
