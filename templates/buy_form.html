@@ -32,8 +32,22 @@
         <option value="Blue">Blue</option>
         <option value="Red">Red</option>
         <option value="Gray">Gray</option>
+        <option value="White">White</option>
       </select>
     </div>
+    {% if is_garment %}
+    <div class="mb-3">
+      <label for="size">Choose Size</label>
+      <select name="size" id="size" class="form-control" required>
+        <option value="" disabled selected>Select a size</option>
+        <option value="S">Small (S)</option>
+        <option value="M">Medium (M)</option>
+        <option value="L">Large (L)</option>
+        <option value="XL">Extra Large (XL)</option>
+        <option value="XXL">XXL</option>
+      </select>
+    </div>
+    {% endif %}
 
     <div class="mb-3">
       <label for="quantity">Quantity</label>

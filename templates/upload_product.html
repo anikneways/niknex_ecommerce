@@ -1,28 +1,73 @@
 {% extends "base.html" %} {% block title %}Upload Product{% endblock %} {% block
 content %}
-<h2>Upload Your Product</h2>
+<div class="container my-5" style="max-width: 700px">
+  <h2 class="mb-4 text-center">📦 Upload a New Product</h2>
 
-{% if message %}
-<p style="color: green">{{ message }}</p>
-{% endif %}
+  {% if message %}
+  <div class="alert alert-success">{{ message }}</div>
+  {% endif %}
 
-<form method="POST" enctype="multipart/form-data">
-  <p>
-    <label for="name">Product Name:</label><br />
-    <input type="text" name="name" id="name" required />
-  </p>
-  <p>
-    <label for="description">Description:</label><br />
-    <textarea name="description" id="description" required></textarea>
-  </p>
-  <p>
-    <label for="price">Price:</label><br />
-    <input type="number" step="0.01" name="price" id="price" required />
-  </p>
-  <p>
-    <label for="image">Product Image:</label><br />
-    <input type="file" name="image" id="image" />
-  </p>
-  <p><button type="submit">Upload</button></p>
-</form>
+  <form method="POST" enctype="multipart/form-data">
+    <div class="mb-3">
+      <label for="name" class="form-label">Product Name</label>
+      <input type="text" class="form-control" name="name" id="name" required />
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <textarea
+        class="form-control"
+        name="description"
+        id="description"
+        rows="3"
+        required
+      ></textarea>
+    </div>
+
+    <div class="mb-3">
+      <label for="price" class="form-label">Price (৳)</label>
+      <input
+        type="number"
+        class="form-control"
+        step="0.01"
+        name="price"
+        id="price"
+        required
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="color" class="form-label">Color</label>
+      <input
+        type="text"
+        class="form-control"
+        name="color"
+        id="color"
+        placeholder="e.g. Red, Blue, Black"
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="category" class="form-label">Category</label>
+      <select class="form-select" name="category" id="category" required>
+        <option value="">Select Category</option>
+        <option value="gym">Gym Equipment</option>
+        <option value="clothing">Fitness Clothing</option>
+        <option value="supplement">Supplements</option>
+        <option value="supplement">Clothes</option>
+        <option value="supplement">Devices</option>
+        <!-- Add dynamic options from your backend -->
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="image" class="form-label">Product Image</label>
+      <input class="form-control" type="file" name="image" id="image" />
+    </div>
+
+    <div class="text-center">
+      <button type="submit" class="btn btn-primary px-4">Upload Product</button>
+    </div>
+  </form>
+</div>
 {% endblock %}

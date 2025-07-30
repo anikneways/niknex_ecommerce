@@ -8,6 +8,9 @@ from flask_migrate import Migrate
 from functools import wraps
 from pytz import timezone
 from datetime import timedelta
+from werkzeug.utils import secure_filename
+
+
 app = Flask(__name__)
 app.secret_key = 'anikking'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///products.db'
@@ -49,6 +52,7 @@ class Product(db.Model):
     image_filename = db.Column(db.String(200))
     is_approved = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    category = db.Column(db.String(50), nullable=True)
 
 
 class Order(db.Model):
@@ -71,6 +75,7 @@ class Order(db.Model):
     delivery_status = db.Column(db.String(50), default='Order Placed')
     notified = db.Column(db.Boolean, default=False)
     color = db.Column(db.String(50), nullable=True)
+    size = db.Column(db.String(50), nullable=True)
     selected_color = db.Column(db.String(50), nullable=True)
     expected_delivery = db.Column(db.DateTime, nullable=True)
     delivered_at = db.Column(db.DateTime, nullable=True)
@@ -145,7 +150,7 @@ def upload_product():
         if image:
             image.save(os.path.join(
                 app.config['UPLOAD_FOLDER'], image_filename))
-
+        category = request.form['category']
         new_product = Product(name=name, description=description,
                               price=price, image_filename=image_filename)
         db.session.add(new_product)
@@ -274,6 +279,8 @@ def admin_search_logs():
 @login_required
 def buy_product(product_id):
     product = Product.query.get_or_404(product_id)
+    is_garment = product.category and product.category.lower() in [
+        "tshirts", "garments"]
 
     if request.method == 'POST':
         name = request.form.get('name', '').strip()
@@ -282,8 +289,13 @@ def buy_product(product_id):
         payment_method = request.form.get(
             'payment_method', 'Cash on Delivery').strip()
         selected_color = request.form.get('color', '').strip()
+
+        selected_size = request.form.get(
+            'size', '').strip() if is_garment else None
         delivery_area = address
         quantity = int(request.form.get('quantity', 1))
+        is_garment = product.category and product.category.lower() in [
+            "tshirt", "garments"]
 
         if not all([name, phone, address, payment_method]):
             flash("Please fill all required fields.", "danger")
@@ -303,7 +315,8 @@ def buy_product(product_id):
             delivery_area=delivery_area,
             courier_charge=courier_charge,
             total_amount=total_amount,
-            selected_color=selected_color
+            selected_color=selected_color,
+            size=selected_size
         )
 
         try:
@@ -312,13 +325,13 @@ def buy_product(product_id):
         except Exception:
             db.session.rollback()
             flash("Failed to place order. Please try again.", "danger")
-            return render_template('buy_form.html', product=product)
+            return render_template('buy_form.html', product=product, is_garment=is_garment)
 
         flash(
             f"Order placed successfully! Total: ৳{total_amount:.2f}", "success")
         return redirect(url_for('order_status', order_id=order.id))
 
-    return render_template('buy_form.html', product=product)
+    return render_template('buy_form.html', product=product, is_garment=is_garment)
 
 
 @app.route('/order/<int:order_id>')
@@ -361,6 +374,44 @@ def search_products():
     else:
         products = []
     return render_template('search_results.html', products=products, query=q)
+
+
+@app.route('/admiin/edit/<int:product_id>', methods=['GET', 'POST'])
+@admin_required
+def edit_product(product_id):
+    product = Product.query.get_or_404(product_id)
+
+    if request.method == 'POST':
+        product.name = request.form['name']
+        product.price = request.form['price']
+        product.description = request.form['description']
+        image = request.files.get('image')
+        if image and image.filename:
+            filename = secure_filename(image.filename)
+            image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            image.save(image_path)
+            product.image_filename = filename
+        db.session.commit()
+        flash("Product updaed successfully.", "success")
+        return redirect(url_for('admin_products'))
+    return render_template('admin/edit_product.html', product=product)
+
+
+@app.route('/admin/delete/<int:product_id>', methods=['POST'])
+def delete_product(product_id):
+    product = Product.query.get_or_404(product_id)
+    related_orders = Order.query.filter_by(product_id=product.id).count()
+    if related_orders > 0:
+        flash("Cannot delete product because there are existing orders related to it .", "danger")
+        return redirect(url_for('admin_products'))
+    try:
+        db.session.delete(product)
+        db.session.commit()
+        flash("Product deleted successfully.", "success")
+    except Exception as e:
+        db.session.rollback()
+        flash("Failed to delete product:" + str(e), "danger")
+    return redirect(url_for('admin_products'))
 
 
 if __name__ == '__main__':

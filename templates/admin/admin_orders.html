@@ -1,5 +1,6 @@
 {% extends "base.html" %} {% block title %}Admin Orders{% endblock %} {% block
 content %}
+
 <style>
   .admin-header {
     display: flex;
@@ -19,11 +20,25 @@ content %}
   .table thead th {
     background-color: #343a40;
     color: white;
+    text-align: center;
   }
 
   .table-hover tbody tr:hover {
-    background-color: #f1f1f1;
+    background-color: #f9f9f9;
     cursor: pointer;
+  }
+
+  .table td,
+  .table th {
+    vertical-align: middle;
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    .admin-header {
+      flex-direction: column;
+      gap: 10px;
+    }
   }
 </style>
 
@@ -50,48 +65,83 @@ content %}
 <div class="container mt-4">
   <div class="admin-header mb-4">
     <h1><i class="bi bi-bag-check-fill text-primary"></i> Orders Overview</h1>
-    <a href="{{ url_for('admin_dashboard') }}" class="btn btn-outline-primary">
-      &larr; Back to Dashboard
-    </a>
+    <div class="d-flex gap-2">
+      <form class="d-flex" method="get" action="{{ url_for('admin_orders') }}">
+        <input
+          type="search"
+          name="q"
+          placeholder="Search..."
+          class="form-control me-2"
+        />
+        <button class="btn btn-outline-secondary" type="submit">
+          <i class="bi bi-search"></i>
+        </button>
+      </form>
+      <a
+        href="{{ url_for('admin_dashboard') }}"
+        class="btn btn-outline-primary"
+      >
+        <i class="bi bi-arrow-left-circle"></i> Dashboard
+      </a>
+    </div>
   </div>
 
   <div class="card shadow-sm mb-4">
     <div class="card-body">
-      <table class="table table-bordered table-striped table-hover">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>User</th>
-            <th>Product</th>
-            <th>Qty</th>
-            <th>Customer</th>
-            <th>Phone</th>
-            <th>Address</th>
-            <th>Payment</th>
-            <th>Date</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for order in orders %}
-          <tr>
-            <td>{{ order.id }}</td>
-            <td>{{ order.user.username }}</td>
-            <td>{{ order.product.name }}</td>
-            <td>{{ order.quantity }}</td>
-            <td>{{ order.customer_name }}</td>
-            <td>{{ order.customer_phone }}</td>
-            <td>{{ order.customer_address }}</td>
-            <td>{{ order.payment_method }}</td>
-            <td>{{ order.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
-          </tr>
-          {% else %}
-          <tr>
-            <td colspan="9" class="text-center text-muted">No orders found.</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+      <div class="table-responsive">
+        <table
+          class="table table-bordered table-striped table-hover align-middle"
+        >
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>User</th>
+              <th>Product</th>
+              <th>Qty</th>
+              <th>Customer</th>
+              <th>Phone</th>
+              <th>Address</th>
+              <th>Payment</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for order in orders %}
+            <tr>
+              <td>{{ order.id }}</td>
+              <td>{{ order.user.username }}</td>
+              <td>{{ order.product.name }}</td>
+              <td>{{ order.quantity }}</td>
+              <td>{{ order.customer_name }}</td>
+              <td>{{ order.customer_phone }}</td>
+              <td>{{ order.customer_address }}</td>
+              <td>
+                <span
+                  class="badge bg-{{ 'success' if order.payment_method == 'bKash' else 'secondary' }}"
+                >
+                  {{ order.payment_method }}
+                </span>
+              </td>
+              <td>
+                <span
+                  title="{{ order.created_at.strftime('%A, %d %B %Y %I:%M %p') }}"
+                >
+                  {{ order.created_at.strftime('%Y-%m-%d %H:%M') }}
+                </span>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="9" class="text-center text-muted">
+                No orders found.
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
+
 {% endblock %}
